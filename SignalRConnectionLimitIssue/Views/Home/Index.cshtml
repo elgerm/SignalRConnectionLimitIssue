@@ -3,29 +3,83 @@
 }
 
 <div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+    <h1>SignalR connection limitations</h1>
+
+    <h4><a href="/" target="_blank">Open</a> more that 8 tabs and see how it hangs!</h4>
+    <p id="messages"></p>
 </div>
 
+<script>
+    $(function () {
+        $.connection.hub.logging = true;
+        var messagingHubProxy = $.connection.messagingHub;
+
+        messagingHubProxy.client.receiveMessage = function (message) {
+            $('#messages').append(message);
+            $('#messages').append('<br />');
+        };
+
+        $.connection.hub.start().done(function () {
+            console.info('SignalR is connected.');
+        });
+
+        $('#btnSubmit').prop('disabled', true);
+        $('#txtMessage').keyup(function () {
+            $('#btnSubmit').prop('disabled', $.trim(this.value).length == 0 ? true : false);
+        })
+
+        $('#btnSubmit').click(function () {
+
+            // disable button to prevent multiple clicks.
+            $("#btnSubmit").prop("disabled", true);
+
+            // get message string...
+            var message = $('#txtMessage').val();
+
+            // if it wasn't empty...
+            if (message != null && $.trim(message) != '') {
+                $.connection.messagingHub.server.sendOthers(message);
+
+                // ready for next message
+                $('#txtMessage').val('');
+                $("#btnSubmit").prop("disabled", false);
+
+            } else {
+                // enable it.
+                $("#btnSubmit").prop("disabled", false);
+            }
+        });
+
+        var canConnectSignalR = function(){
+            //$.ajax({
+            //    url: '/api/settings/sendMessage?message=' + message,
+            //    type: 'POST',
+            //    contentType: 'application/json',
+            //    success: function (result) {
+            //        console.debug('message ' + message + ' send.');
+            //        $('#txtMessage').val('');
+
+            //        // enable it.
+            //        $("#btnSubmit").prop("disabled", false);
+            //    },
+            //    error: function (err) {
+            //        console.warn('Error in server response.');
+            //        console.log(err);
+
+            //        // enable it.
+            //        $("#btnSubmit").prop("disabled", false);
+            //    }
+            //});
+        }
+    });
+</script>
 <div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+    <div class="col-md-3">
+        <div class="input-group">
+            <input type="text" id="txtMessage" placeholder="Enter a message here..." name="message" class="form-control" />
+            <span class="input-group-btn">
+                <button type="submit" id="btnSubmit" class="btn btn-primary">Send</button>
+            </span>
+        </div>
     </div>
 </div>
