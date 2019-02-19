@@ -1,11 +1,13 @@
-﻿@{
+@{
     ViewBag.Title = "Home Page";
 }
 
 <div class="jumbotron">
-    <h1>SignalR connection limitations</h1>
+  <h1>SignalRResubscribeIssue</h1>
 
-    <h4><a href="/" target="_blank">Open</a> more that 8 tabs and see how it hangs!</h4>
+    <h4>
+      just stop and start connection a few times, send a message. Install js < 2.4.0 and this issue is not there.
+    </h4>
     <p id="messages"></p>
 </div>
 
@@ -74,12 +76,17 @@
     });
 </script>
 <div class="row">
-    <div class="col-md-3">
-        <div class="input-group">
-            <input type="text" id="txtMessage" placeholder="Enter a message here..." name="message" class="form-control" />
-            <span class="input-group-btn">
-                <button type="submit" id="btnSubmit" class="btn btn-primary">Send</button>
-            </span>
-        </div>
+  <div class="col-md-3">
+    <div class="input-group">
+      <input type="text" id="txtMessage" placeholder="Enter a message here..." name="message" class="form-control" />
+      <span class="input-group-btn">
+        <button type="submit" id="btnSubmit" class="btn btn-primary">Send</button>
+      </span>
     </div>
-</div>
+    
+  </div>
+  <div class="col-md-3">
+    <button type="button" class="btn btn-primary" onclick="$.connection.hub.stop()">stop connection</button>
+    <button type="button" class="btn btn-primary" onclick="$.connection.hub.start()">start connection</button>
+  </div>
+  </div>
